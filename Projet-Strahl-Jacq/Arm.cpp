@@ -2,16 +2,16 @@
 #include <Math.h>
 #include <Arduino.h>
 
-#define DEBUG
+//#define DEBUG
 
 Arm::Arm(int8_t pinBase, int8_t pinShoulder, int8_t pinElbow) {
 #ifdef DEBUG
   Serial.println("New Arm");
 #endif
 
-  mBase->pin = pinBase;
-  mShoulder->pin = pinShoulder;
-  mElbow->pin = pinElbow;
+  mBase->     pin = pinBase;
+  mShoulder-> pin = pinShoulder;
+  mElbow->    pin = pinElbow;
 
   ArmInit();
 }
@@ -79,31 +79,22 @@ void Arm::AttachServos() {
   Serial.println("Arm::AttachServos");
 #endif
 
-  mBase->     servo->attach(mBase->pin);
-  mShoulder-> servo->attach(mShoulder->pin);
-  mElbow->    servo->attach(mElbow->pin);
+  mBase->     servo->attach(mBase->     pin);
+  mShoulder-> servo->attach(mShoulder-> pin);
+  mElbow->    servo->attach(mElbow->    pin);
 }
 
 void Arm::InitPositionServos() {
 #ifdef DEBUG
   Serial.println("Arm::InitPositionServos");
 #endif
-  
-  mBase->     servo->write(BASE_ANGLE_INIT);
-  delay(1000);
-  mShoulder-> servo->write(SHOULDER_ANGLE_INIT);
-  delay(1000);
-  mElbow->    servo->write(ELBOW_ANGLE_INIT);
-  delay(1000);
 
-  mBase->     angle = BASE_ANGLE_INIT;
-  mShoulder-> angle = SHOULDER_ANGLE_INIT;
-  mElbow->    angle = ELBOW_ANGLE_INIT;
+  MoveServosToAngle(BASE_ANGLE_INIT, SHOULDER_ANGLE_INIT, ELBOW_ANGLE_INIT);
 }
 
 void Arm::SetRangeServos() {
 #ifdef DEBUG
-  Serial.println("Arm::SetRangeServos");
+  Serial.println("Arm::SetRangeServo");
 #endif
 
   mBase->     range = BASE_RANGE;
@@ -116,12 +107,7 @@ void Arm::CalibrateServos() {
   Serial.println("Arm::CalibrateServo");
 #endif
 
-  mBase->     servo->write(90);
-  delay(1000);
-  mShoulder-> servo->write(90);
-  delay(1000);
-  mElbow->    servo->write(90);
-  delay(1000);
+  MoveServosToAngle(90, 90, 90);
 }
 
 // Servo movements ---------------------------------------------------- 
@@ -151,26 +137,23 @@ void Arm::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t el
 #ifdef DEBUG
   Serial.println("Arm::MoveServosToAngle");
 #endif
+
+  mBase->     angle = baseAngle;
+  mShoulder-> angle = shoulderAngle;
+  mElbow->    angle = elbowAngle;
   
-  mBase->     anglePrevious = mBase->angle;
-  mShoulder-> anglePrevious = mShoulder->angle;
-  mElbow->    anglePrevious = mElbow->angle;
+  mBase->     servo->write(mBase->     angle);
+  mShoulder-> servo->write(mShoulder-> angle);
+  mElbow->    servo->write(mElbow->    angle);
 
-  mBase->     angleNext = mBase->angle;
-  mShoulder-> angleNext = mShoulder->angle;
-  mElbow->    angleNext = mElbow->angle;
-
-  mBase->     angleTarget = baseAngle;
-  mShoulder-> angleTarget = shoulderAngle;
-  mElbow->    angleTarget = elbowAngle;
-
-  mBase->servo->write(mBase->angleTarget);
-  mShoulder->servo->write(mShoulder->angleTarget);
-  mElbow->servo->write(mElbow->angleTarget);
-
-  mBase->angle = mBase->angleTarget;
-  mShoulder->angle = mShoulder->angleTarget;
-  mElbow->angle = mElbow->angleTarget;
+#ifdef DEBUG
+  Serial.print("     ServosAngle : base = ");
+  Serial.print(mBase->    angle);
+  Serial.print(" shoulder = ");
+  Serial.print(mShoulder->angle);
+  Serial.print(" elbow = ");
+  Serial.println(mElbow-> angle);
+#endif
 }
 
 void Arm::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay) {
@@ -178,60 +161,83 @@ void Arm::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t el
   Serial.println("Arm::MoveServosToAngleTime");
 #endif
 
-  uint8_t stepNumber = 8;
+  uint8_t stepNumber = 5;
   uint16_t stepDelay = timeDelay/stepNumber;
   
-  mBase->     anglePrevious = mBase->angle;
-  mShoulder-> anglePrevious = mShoulder->angle;
-  mElbow->    anglePrevious = mElbow->angle;
-
-  mBase->     angleNext = mBase->angle;
-  mShoulder-> angleNext = mShoulder->angle;
-  mElbow->    angleNext = mElbow->angle;
-
-  mBase->     angleTarget = baseAngle;
-  mShoulder-> angleTarget = shoulderAngle;
-  mElbow->    angleTarget = elbowAngle;
-
-  mBase->     stepMoving = abs(mBase->anglePrevious     - mBase->angleTarget)     / stepNumber;
-  mShoulder-> stepMoving = abs(mShoulder->anglePrevious - mShoulder->angleTarget) / stepNumber;
-  mElbow->    stepMoving = abs(mElbow->anglePrevious    - mElbow->angleTarget)    / stepNumber;
-
-  for(uint8_t i=0;i<stepNumber;i++)
-  {
-    if (mBase->angleNext > mBase->angleTarget) mBase->angleNext += mBase->stepMoving;
-    if (mBase->angleNext < mBase->angleTarget) mBase->angleNext -= mBase->stepMoving;
-    mBase->servo->write(mBase->angleNext);
-
-    if (mShoulder->angleNext > mShoulder->angleTarget) mShoulder->angleNext += mShoulder->stepMoving;
-    if (mShoulder->angleNext < mShoulder->angleTarget) mShoulder->angleNext -= mShoulder->stepMoving;
-    mShoulder->servo->write(mShoulder->angleNext);
-
-    if (mElbow->angleNext > mElbow->angleTarget) mElbow->angleNext += mElbow->stepMoving;
-    if (mElbow->angleNext < mElbow->angleTarget) mElbow->angleNext -= mElbow->stepMoving;
-    mElbow->servo->write(mElbow->angleNext);
+#ifdef DEBUG
+  Serial.print("     stepDelay = ");
+  Serial.println(stepDelay);
+#endif
 
 #ifdef DEBUG
-    //String outString = "ServosAngle : base = " + String(mBase->angleNext) + " shoulder = " + String(mShoulder->angleNext) +  " elbow =" +  String(mElbow->angleNext); 
-    //Serial.println(outString);
-    Serial.print("ServosAngle : base = ");
-    Serial.print(mBase->angleNext);
+  Serial.print("     Angle : base = ");
+  Serial.print(baseAngle);
+  Serial.print(" shoulder = ");
+  Serial.print(shoulderAngle);
+  Serial.print(" elbow = ");
+  Serial.println(elbowAngle);
+#endif
+
+#ifdef DEBUG
+  Serial.print("     ServosAngle : base = ");
+  Serial.print(mBase->    angle);
+  Serial.print(" shoulder = ");
+  Serial.print(mShoulder->angle);
+  Serial.print(" elbow = ");
+  Serial.println(mElbow-> angle);
+#endif
+
+  mBase->     stepMoving = (baseAngle     - mBase->     angle) / stepNumber;
+  mShoulder-> stepMoving = (shoulderAngle - mShoulder-> angle) / stepNumber;
+  mElbow->    stepMoving = (elbowAngle    - mElbow->    angle) / stepNumber;
+
+#ifdef DEBUG
+    Serial.print("     StepMoving : base = ");
+    Serial.print(mBase->    stepMoving);
     Serial.print(" shoulder = ");
-    Serial.print(mShoulder->angleNext);
-    Serial.print(" elbow =");
-    Serial.println(mElbow->angleNext);
+    Serial.print(mShoulder->stepMoving);
+    Serial.print(" elbow = ");
+    Serial.println(mElbow-> stepMoving);
+#endif
+  
+  for(uint8_t i=1;i<stepNumber;i++)
+  {
+    mBase->     angle += mBase->     stepMoving;
+    mShoulder-> angle += mShoulder-> stepMoving;
+    mElbow->    angle += mElbow->    stepMoving;
+    
+    mBase->     servo->write(mBase->     angle);
+    mShoulder-> servo->write(mShoulder-> angle);
+    mElbow->    servo->write(mElbow->    angle);
+
+#ifdef DEBUG
+    Serial.print("     ServosAngle : base = ");
+    Serial.print(mBase->angle);
+    Serial.print(" shoulder = ");
+    Serial.print(mShoulder->angle);
+    Serial.print(" elbow = ");
+    Serial.println(mElbow->angle);
 #endif
 
     delay(stepDelay);
   }
 
-  mBase->servo->write(mBase->angleTarget);
-  mShoulder->servo->write(mShoulder->angleTarget);
-  mElbow->servo->write(mElbow->angleTarget);
+  mBase->     angle = baseAngle;
+  mShoulder-> angle = shoulderAngle;
+  mElbow->    angle = elbowAngle;
+  
+  mBase->     servo->write(mBase->     angle);
+  mShoulder-> servo->write(mShoulder-> angle);
+  mElbow->    servo->write(mElbow->    angle);
 
-  mBase->angle = mBase->angleTarget;
-  mShoulder->angle = mShoulder->angleTarget;
-  mElbow->angle = mElbow->angleTarget;
+#ifdef DEBUG
+    Serial.print("     EndMovement : base = ");
+    Serial.print(mBase->angle);
+    Serial.print(" shoulder = ");
+    Serial.print(mShoulder->angle);
+    Serial.print(" elbow = ");
+    Serial.println(mElbow->angle);
+#endif
 }
 
 // Coordinates ---------------------------------------------------
@@ -247,6 +253,8 @@ void Arm::SetCoordinateTarget(float x, float y, float z) {
 
   mTarget->module    = sqrt(sq(x) + sq(y));
   mTarget->argument  = asin(y / mTarget->module);
+
+  
 }
 
 void Arm::SetCoordinatePolarTarget(float module, float argument, float z) {
@@ -278,27 +286,68 @@ float Arm::GetServoBaseAngle() {
 #ifdef DEBUG
   Serial.println("Arm::GetServoBaseAngle");
 #endif
+  bool MODE = 1;
+  float angle;
 
-  return MaxAngle(mTarget->argument);
+  float arg = (float)mTarget->argument;
+  
+  if(MODE) angle = (arg + PI/2) * 180/PI;
+  else angle = -(arg - PI/2) * 180/PI;
+
+#ifdef DEBUG
+  Serial.print("     ");
+  Serial.println(angle);
+#endif
+
+  return angle;
 }
 
 float Arm::GetServoShoulderAngle() {
 #ifdef DEBUG
   Serial.println("Arm::GetServoShoulderAngle");
 #endif
+  bool MODE = 1;
+  float angle;
 
-  float c = sqrt((sq(mTarget->module - mBase->range) + sq(mTarget->z)));
-  float error = atan(mTarget->z / (mTarget->module - mElbow->range));
-  return MaxAngle(error - acos((-sq(mElbow->range) + sq(mShoulder->range) + sq(c)) / (2 * mShoulder->range * c)));
+  float a = (float)mElbow->range;
+  float b = (float)sqrt(sq(mTarget->module) + sq(mTarget->z));
+  float c = (float)mShoulder->range;
+
+  float mod = (float)mTarget->module;
+
+  if(MODE) angle = (acos(mod/b)+acos( (sq(a) - sq(b) - sq(c))/(2*b*c))) * 180.0/PI;
+  else angle = -(acos(mod/b)+acos( (sq(a) - sq(b) - sq(c))/(2*b*c))-PI) * 180.0/PI;
+
+#ifdef DEBUG
+  Serial.print("     ");
+  Serial.println(angle);
+#endif
+
+  return angle;
 }
 
 float Arm::GetServoElbowAngle() {
 #ifdef DEBUG
   Serial.println("Arm::GetServoElbowAngle");
 #endif
+  bool MODE = 1;
+  float angle;
 
-  float c = sqrt((sq(mTarget->module - mElbow->range) + sq(mTarget->z)));
-  return MaxAngle((-PI / 2) + acos((-sq(c) + sq(mShoulder->range) + sq(mBase->range)) / (2 * mShoulder->range * mBase->range)));
+  float a = (float)mElbow->range;
+  float b = (float)sqrt(sq(mTarget->module) + sq(mTarget->z));
+  float c = (float)mShoulder->range;
+
+  float mod = (float)mTarget->module;
+
+  if(MODE) angle = -( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) - PI ) * 180/PI;
+  else angle = ( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) ) * 180/PI;
+
+#ifdef DEBUG
+  Serial.print("     ");
+  Serial.println(angle);
+#endif
+
+  return angle;
 }
 
 float Arm::MaxAngle(float angle) {
@@ -311,6 +360,13 @@ float Arm::MaxAngle(float angle) {
   return angle;
 }
 
+float Arm::RadToDegree(float angle) {
+#ifdef DEBUG
+  Serial.println("Arm::RadToDegree");
+#endif
+  return (180.0/PI)*angle;
+}
+
 // Getter ----------------------------------------------------
 
 uint8_t Arm::GetBaseAngle() {
@@ -318,7 +374,7 @@ uint8_t Arm::GetBaseAngle() {
   Serial.println("Arm::GetBaseAngle");
 #endif
 
-  return mBase->angle;
+  return mBase->servo->read();
 }
 
 uint8_t Arm::GetShoulderAngle() {
@@ -326,7 +382,7 @@ uint8_t Arm::GetShoulderAngle() {
   Serial.println("Arm::GetShoulderAngle");
 #endif
 
-  return mShoulder->angle;
+  return mShoulder->servo->read();
 }
 
 uint8_t Arm::GetElbowAngle()  {
@@ -334,5 +390,5 @@ uint8_t Arm::GetElbowAngle()  {
   Serial.println("Arm::GetElbowAngle");
 #endif
 
-  return mElbow->angle;
+  return mElbow->servo->read();
 }

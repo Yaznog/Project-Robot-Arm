@@ -1,6 +1,6 @@
 #include "Robot.h"
 
-#define DEBUG
+//#define DEBUG
 
 Robot::Robot() {
 #ifdef DEBUG
@@ -54,6 +54,22 @@ void Robot::MoveWristToCoordinatePolar(float module, float argument, float z, ui
 #endif
   mArm->SetCoordinatePolarTarget(module, argument, z);
   mArm->MoveToTarget(timeDelay);
+}
+
+// InitPosition ---------------------------------------------------- 
+
+void Robot::InitPositionArm() {
+#ifdef DEBUG
+  Serial.println("Robot::InitPositionArm");
+#endif 
+  mArm->InitPositionServos();
+}
+
+void Robot::InitPositionHand() {
+#ifdef DEBUG
+  Serial.println("Robot::InitPositionHand");
+#endif 
+  //mHand->InitPositionServos();
 }
 
 // Calibrate ---------------------------------------------------- 

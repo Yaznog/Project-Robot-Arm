@@ -18,6 +18,21 @@
 #define LOW_LIMIT_TIMEOUT 2000
 #define HIGH_LIMIT_TIMEOUT 6000
 
+#define BASE_ANGLE_INIT 90
+#define BASE_ANGLE_MAX 180
+#define BASE_ANGLE_MIN 0
+#define BASE_RANGE 50
+    
+#define SHOULDER_ANGLE_INIT 90
+#define SHOULDER_ANGLE_MAX 180
+#define SHOULDER_ANGLE_MIN 0
+#define SHOULDER_RANGE 100
+    
+#define ELBOW_ANGLE_INIT 90
+#define ELBOW_ANGLE_MAX 180
+#define ELBOW_ANGLE_MIN 0
+#define ELBOW_RANGE 100
+
 struct Servomotor{
   Servo *servo;
   uint8_t angle;
@@ -68,27 +83,13 @@ class Arm
     float GetServoShoulderAngle();
     float GetServoElbowAngle();
     float MaxAngle(float value);
+    float RadToDegree(float angle);
 
     uint8_t GetBaseAngle();
     uint8_t GetShoulderAngle();
     uint8_t GetElbowAngle();
     
-  private:
-
-    const uint8_t BASE_ANGLE_INIT     = 90;
-    const uint8_t BASE_ANGLE_MAX      = 180;
-    const uint8_t BASE_ANGLE_MIN      = 0;
-    const uint8_t BASE_RANGE          = 100;
-    
-    const uint8_t SHOULDER_ANGLE_INIT = 90;
-    const uint8_t SHOULDER_ANGLE_MAX  = 180;
-    const uint8_t SHOULDER_ANGLE_MIN  = 0;
-    const uint8_t SHOULDER_RANGE      = 100;
-    
-    const uint8_t ELBOW_ANGLE_INIT    = 90;
-    const uint8_t ELBOW_ANGLE_MAX     = 180;
-    const uint8_t ELBOW_ANGLE_MIN     = 0;
-    const uint8_t ELBOW_RANGE         = 100;
+  private:    
     
     Servomotor *mBase;
     Servomotor *mShoulder;

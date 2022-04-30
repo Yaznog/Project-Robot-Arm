@@ -2,6 +2,8 @@
 #include <Math.h>
 #include "Robot.h"
 
+//#define MATLAB
+
 Robot* robot;
 
 void setup() 
@@ -12,8 +14,9 @@ void setup()
 
 void loop() 
 {
-  DoCircle(7.5, 5, 500, 20, 1);
-  delay(10000);
+  DoCircle(10, 10, 500, 10, 1);
+  delay(2000);
+  
 }
 
 void DoCircle(float radius, float z, uint16_t timeDelay, uint8_t stepNumber, uint8_t rotationNumber)
@@ -24,8 +27,14 @@ void DoCircle(float radius, float z, uint16_t timeDelay, uint8_t stepNumber, uin
   {
     for(uint8_t i=0;i<stepNumber;i++)
     {
-      float x = radius*cos( ((float)i/stepNumber)*2*PI ) + 1.5*radius;
+      float x = radius*cos( ((float)i/stepNumber)*2*PI ) + 2*radius;
       float y = radius*sin( ((float)i/stepNumber)*2*PI );
+#ifdef MATLAB
+      Serial.print(x);
+      Serial.print(" ");
+      Serial.print(y);
+      Serial.println(";");
+#endif
       robot->MoveWristToCoordinate(x, y, z, timeDelay);
     }
   }

@@ -17,6 +17,9 @@ class Robot
     void MoveWristToCoordinatePolar(float module, float argument, float z);
     void MoveWristToCoordinatePolar(float module, float argument, float z, uint16_t timeDelay);
 
+    void InitPositionArm();
+    void InitPositionHand();
+      
     void CalibrateArm();
     void CalibrateHand();
 
