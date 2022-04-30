@@ -11,12 +11,19 @@ class Robot
 
     Robot();
     ~Robot();
-    void UpdateServoLocation();
+    
+    void MoveWristToCoordinate(float x, float y, float z);
+    void MoveWristToCoordinate(float x, float y, float z, uint16_t timeDelay);
+    void MoveWristToCoordinatePolar(float module, float argument, float z);
+    void MoveWristToCoordinatePolar(float module, float argument, float z, uint16_t timeDelay);
+
+    void CalibrateArm();
+    void CalibrateHand();
 
   private:
 
-    Arm *arm;
-    //Hand *hand;
+    Arm *mArm;
+    //Hand *mHand;
 };
 
 #endif

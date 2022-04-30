@@ -18,25 +18,21 @@
 #define LOW_LIMIT_TIMEOUT 2000
 #define HIGH_LIMIT_TIMEOUT 6000
 
-#define BASE_ANGLE_INIT 90
-#define SHOULDER_ANGLE_INIT 90
-#define ELBOW_ANGLE_INIT 90
-
-struct Servomotor
-{
+struct Servomotor{
   Servo *servo;
   uint8_t angle;
   uint8_t angleTarget;
   uint8_t anglePrevious;
   uint8_t angleNext;
   uint8_t angleInit;
+  uint8_t angleMax;
+  uint8_t angleMin;
   uint8_t stepMoving;
-  //bool FLAG_MOVING = false;
+  uint8_t range;
   int8_t pin = -1;
 };
 
-struct Coordinate
-{
+struct Coordinate{
   float x;
   float y;
   float z;
@@ -56,39 +52,49 @@ class Arm
     void _softwarePWM(int high_time, int low_time);
     void AttachServos();
     void InitPositionServos();
+    void SetRangeServos();
     void CalibrateServos();
+    
+    void MoveToTarget();
+    void MoveToTarget(uint16_t timeDelay);
+    void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle);
+    void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay); //timeDelay in millisecond
 
-    void MoveServosToAngleTime(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay); //timeDelay in millisecond
+    void SetCoordinateTarget(float x, float y, float z);
+    void SetCoordinatePolarTarget(float module, float argument, float z);
+    
+    float ServoMaxAngle(Servomotor *servo, uint8_t angle);
+    float GetServoBaseAngle();
+    float GetServoShoulderAngle();
+    float GetServoElbowAngle();
+    float MaxAngle(float value);
 
+    uint8_t GetBaseAngle();
+    uint8_t GetShoulderAngle();
+    uint8_t GetElbowAngle();
+    
   private:
-    /*
-        int8_t mPinBase;
-        int8_t mPinShoulder;
-        int8_t mPinElbow;
 
-        Servo *mBase;
-        Servo *mShoulder;
-        Servo *mElbow;*/
-
+    const uint8_t BASE_ANGLE_INIT     = 90;
+    const uint8_t BASE_ANGLE_MAX      = 180;
+    const uint8_t BASE_ANGLE_MIN      = 0;
+    const uint8_t BASE_RANGE          = 100;
+    
+    const uint8_t SHOULDER_ANGLE_INIT = 90;
+    const uint8_t SHOULDER_ANGLE_MAX  = 180;
+    const uint8_t SHOULDER_ANGLE_MIN  = 0;
+    const uint8_t SHOULDER_RANGE      = 100;
+    
+    const uint8_t ELBOW_ANGLE_INIT    = 90;
+    const uint8_t ELBOW_ANGLE_MAX     = 180;
+    const uint8_t ELBOW_ANGLE_MIN     = 0;
+    const uint8_t ELBOW_RANGE         = 100;
+    
     Servomotor *mBase;
     Servomotor *mShoulder;
     Servomotor *mElbow;
-    /*
-        const unsigned int mBaseLength = 100;
-        const unsigned int mShoulderLength = 100;
-        const unsigned int mElbowLength = 100;
 
-        const int8_t mServoTopForbiddenValue = 10;
-        const int8_t mServoMidForbiddenValue = 30;
-        const int8_t mServoBotForbiddenValue = 30;
-
-        float mXCoordinate;
-        float mYCoordinate;
-        float mZCoordinate;
-        float mModuleCoordinate;
-        float mArgumentCoordinate;
-
-        int mEtatMarche = 0;*/
+    Coordinate *mTarget;
 };
 
 #endif
