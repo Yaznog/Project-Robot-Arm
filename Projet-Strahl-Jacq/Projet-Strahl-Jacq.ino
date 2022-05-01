@@ -15,8 +15,7 @@ void setup()
 void loop() 
 {
   DoCircle(10, 10, 500, 10, 1);
-  delay(2000);
-  
+  delay(100000);
 }
 
 void DoCircle(float radius, float z, uint16_t timeDelay, uint8_t stepNumber, uint8_t rotationNumber)
