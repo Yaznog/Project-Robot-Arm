@@ -4,20 +4,6 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-// You should set begin(SOFT_START_DISABLED) if you are using the Arm Robot shield V1.6
-#define SOFT_START_DISABLED    -999
-
-//The default value for the soft start
-#define SOFT_START_DEFAULT    0
-
-//The software PWM is connected to PIN 12. You cannot use the pin 12 if you are using
-//a Braccio shield V4 or newer
-#define SOFT_START_CONTROL_PIN  12
-
-//Low and High Limit Timeout for the Software PWM
-#define LOW_LIMIT_TIMEOUT 2000
-#define HIGH_LIMIT_TIMEOUT 6000
-
 #define BASE_ANGLE_INIT 90
 #define BASE_ANGLE_MAX 180
 #define BASE_ANGLE_MIN 0
@@ -62,9 +48,7 @@ class Arm
     Arm(int8_t pinBase, int8_t pinShoulder, int8_t pinElbow);
     ~Arm();
 
-    unsigned int ArmInit(int soft_start_level=SOFT_START_DEFAULT);
-    void _softStart(int soft_start_level);
-    void _softwarePWM(int high_time, int low_time);
+    void ArmInit();
     void AttachServos();
     void InitPositionServos();
     void SetRangeServos();

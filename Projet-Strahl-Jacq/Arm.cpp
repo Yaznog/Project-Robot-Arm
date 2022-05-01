@@ -24,54 +24,18 @@ Arm::~Arm() {
 
 // Arm init ---------------------------------------------------- 
 
-unsigned int Arm::ArmInit(int soft_start_level) {
+void Arm::ArmInit() {
 #ifdef DEBUG
   Serial.println("Arm::ArmInit Start");
 #endif
 
-  //Calling Braccio.begin(SOFT_START_DISABLED) the Softstart is disabled and you can use the pin 12
-  if(soft_start_level!=SOFT_START_DISABLED){
-    pinMode(SOFT_START_CONTROL_PIN,OUTPUT);
-    digitalWrite(SOFT_START_CONTROL_PIN,LOW);
-  }
-  
   AttachServos();
   InitPositionServos();
   SetRangeServos();
-
-  if(soft_start_level!=SOFT_START_DISABLED)
-        _softStart(soft_start_level);
         
 #ifdef DEBUG
   Serial.println("Arm::ArmInit End");
 #endif
-  return 1;
-}
-
-void Arm::_softStart(int soft_start_level) {
-#ifdef DEBUG
-  Serial.println("Arm::_softStart");
-#endif
-
-  long int tmp=millis();
-  while(millis()-tmp < LOW_LIMIT_TIMEOUT)
-    _softwarePWM(80+soft_start_level, 450 - soft_start_level);   //the sum should be 530usec  
-
-  while(millis()-tmp < HIGH_LIMIT_TIMEOUT)
-    _softwarePWM(75 + soft_start_level, 430 - soft_start_level); //the sum should be 505usec
-
-  digitalWrite(SOFT_START_CONTROL_PIN,HIGH);
-}
-
-void Arm::_softwarePWM(int high_time, int low_time) {
-#ifdef DEBUG
-  //Serial.println("Arm::_softwarePWM");
-#endif
-
-  digitalWrite(SOFT_START_CONTROL_PIN,HIGH);
-  delayMicroseconds(high_time);
-  digitalWrite(SOFT_START_CONTROL_PIN,LOW);
-  delayMicroseconds(low_time); 
 }
 
 void Arm::AttachServos() {
