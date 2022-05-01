@@ -33,8 +33,7 @@ uint8_t nunchuk_data[6];
 uint8_t nunchuk_cali[16];
 
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
-static void nunchuk_init_power() 
-{
+static void nunchuk_init_power() {
   // Add power supply for port C2 (GND) and C3 (PWR)
   PORTC &= ~_BV(PORTC2);
   PORTC |= _BV(PORTC3);
@@ -43,8 +42,7 @@ static void nunchuk_init_power()
 }
 #endif
 
-static void nunchuk_init() 
-{
+static void nunchuk_init() {
   
 #ifdef NUNCHUK_DISABLE_ENCRYPTION
     I2C_START(NUNCHUK_ADDRESS);
@@ -99,8 +97,7 @@ static inline uint8_t nunchuk_decode_byte(uint8_t x) {
  * Central function to read a full chunk of data from Nunchuk
  * @return A boolean if the data transfer was successful
  */
-static uint8_t nunchuk_read() 
-{
+static uint8_t nunchuk_read() {
   uint8_t i;
   Wire.requestFrom(NUNCHUK_ADDRESS, 6);
     for (i = 0; i < 6 && Wire.available(); i++) {
@@ -115,89 +112,74 @@ static uint8_t nunchuk_read()
 
 // Buttons------------------------------------------------------
 
-static uint8_t nunchuk_buttonZ() 
-{
+static uint8_t nunchuk_buttonZ() {
   return (~nunchuk_data[5] >> 0) & 1;
 }
 
-static uint8_t nunchuk_buttonC() 
-{
+static uint8_t nunchuk_buttonC() {
   return (~nunchuk_data[5] >> 1) & 1;
 }
 
 // Joystick------------------------------------------------------
 
-static uint8_t nunchuk_joystickX_raw() 
-{
+static uint8_t nunchuk_joystickX_raw() {
   return nunchuk_data[0];
 }
 
-static uint8_t nunchuk_joystickY_raw() 
-{
+static uint8_t nunchuk_joystickY_raw() {
   return nunchuk_data[1];
 }
 
 // Calibrated Joystick--------------------------------------------
 
-static int16_t nunchuk_joystickX() 
-{
+static int16_t nunchuk_joystickX() {
   return (int16_t) nunchuk_joystickX_raw() - (int16_t) NUNCHUK_JOYSTICK_X_ZERO;
 }
 
-static int16_t nunchuk_joystickY() 
-{
+static int16_t nunchuk_joystickY() {
   return (int16_t) nunchuk_joystickY_raw() - (int16_t) NUNCHUK_JOYSTICK_Y_ZERO;
 }
 
 // Accelerometer--------------------------------------------------
 
-static uint16_t nunchuk_accelX_raw() 
-{
+static uint16_t nunchuk_accelX_raw() {
   return ((uint16_t) nunchuk_data[2] << 2) | ((nunchuk_data[5] >> 2) & 3);
 }
 
-static uint16_t nunchuk_accelY_raw() 
-{
+static uint16_t nunchuk_accelY_raw() {
   return ((uint16_t) nunchuk_data[3] << 2) | ((nunchuk_data[5] >> 4) & 3);
 }
 
-static uint16_t nunchuk_accelZ_raw() 
-{
+static uint16_t nunchuk_accelZ_raw() {
   return ((uint16_t) nunchuk_data[4] << 2) | ((nunchuk_data[5] >> 6) & 3);
 }
 
 // Calibrated Accelerometer------------------------------------------
 
-static int16_t nunchuk_accelX() 
-{
+static int16_t nunchuk_accelX() {
   return (int16_t) nunchuk_accelX_raw() - (int16_t) NUNCHUK_ACCEL_X_ZERO;
 }
 
-static int16_t nunchuk_accelY() 
-{
+static int16_t nunchuk_accelY() {
   return (int16_t) nunchuk_accelY_raw() - (int16_t) NUNCHUK_ACCEL_Y_ZERO;
 }
 
-static int16_t nunchuk_accelZ() 
-{
+static int16_t nunchuk_accelZ() {
   return (int16_t) nunchuk_accelZ_raw() - (int16_t) NUNCHUK_ACCEL_Z_ZERO;
 }
 
 
 // Calculates the pitch angle THETA around y-axis of the Nunchuk in radians
-static float nunchuk_pitch() 
-{ // tilt-y
+static float nunchuk_pitch() { // tilt-y
   return atan2((float) nunchuk_accelY(), (float) nunchuk_accelZ());
 }
 
 // Calculates the roll angle PHI around x-axis of the Nunchuk in radians
-static float nunchuk_roll() 
-{ // tilt-x
+static float nunchuk_roll() { // tilt-x
   return atan2((float) nunchuk_accelX(), (float) nunchuk_accelZ());
 }
 
-static int16_t joystick_DeadZone(int16_t value)
-{
+static int16_t joystick_DeadZone(int16_t value){
   int16_t deadzone_Min = 10;
   int16_t deadzone_Max = 90;
   
@@ -207,8 +189,7 @@ static int16_t joystick_DeadZone(int16_t value)
   return(value);
 }
 
-static boolean JoystickForward()
-{
+static boolean JoystickForward(){
   
   //Serial.println("joystick fo");
   int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
@@ -224,8 +205,7 @@ static boolean JoystickForward()
   return false;
 }
 
-static boolean JoystickRearward()
-{
+static boolean JoystickRearward(){
   int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
   int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
   
@@ -235,8 +215,7 @@ static boolean JoystickRearward()
   return false;
 }
 
-static boolean JoystickLeftSide()
-{
+static boolean JoystickLeftSide(){
   int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
   int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
   
@@ -246,8 +225,7 @@ static boolean JoystickLeftSide()
   return false;
 }
 
-static boolean JoystickRightSide()
-{
+static boolean JoystickRightSide(){
 
   int16_t nunchuk_X_Value = joystick_DeadZone(nunchuk_joystickX());
   int16_t nunchuk_Y_Value = joystick_DeadZone(nunchuk_joystickY());
@@ -257,6 +235,5 @@ static boolean JoystickRightSide()
   if( (angle <= (PI/4) ) && (angle >= (-PI/4)) && (nunchuk_X_Value!=0 || nunchuk_Y_Value!=0)) return true;
   return false;
 }
-
 
 #endif

@@ -291,8 +291,8 @@ float Arm::GetServoBaseAngle() {
 
   float arg = (float)mTarget->argument;
   
-  if(MODE) angle = (arg + PI/2) * 180/PI;
-  else angle = -(arg - PI/2) * 180/PI;
+  if(MODE) angle = (arg + PI/2.0) * 180.0/PI;
+  else angle = -(arg - PI/2.0) * 180.0/PI;
 
 #ifdef DEBUG
   Serial.print("     ");
@@ -339,8 +339,8 @@ float Arm::GetServoElbowAngle() {
 
   float mod = (float)mTarget->module;
 
-  if(MODE) angle = -( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) - PI ) * 180/PI;
-  else angle = ( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) ) * 180/PI;
+  if(MODE) angle = -( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) - PI ) * 180.0/PI;
+  else angle = ( acos( (sq(b) - sq(a) - sq(c)) / (-2*a*c) ) ) * 180.0/PI;
 
 #ifdef DEBUG
   Serial.print("     ");

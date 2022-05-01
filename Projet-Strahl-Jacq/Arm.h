@@ -21,17 +21,17 @@
 #define BASE_ANGLE_INIT 90
 #define BASE_ANGLE_MAX 180
 #define BASE_ANGLE_MIN 0
-#define BASE_RANGE 50
+#define BASE_RANGE 100
     
 #define SHOULDER_ANGLE_INIT 90
 #define SHOULDER_ANGLE_MAX 180
 #define SHOULDER_ANGLE_MIN 0
-#define SHOULDER_RANGE 100
+#define SHOULDER_RANGE 200
     
 #define ELBOW_ANGLE_INIT 90
 #define ELBOW_ANGLE_MAX 180
 #define ELBOW_ANGLE_MIN 0
-#define ELBOW_RANGE 100
+#define ELBOW_RANGE 200
 
 struct Servomotor{
   Servo *servo;

@@ -18,8 +18,8 @@ Robot::~Robot() {
   Serial.println("Robot deleted");
 #endif
 
-  //mHand->~Hand();
   mArm->~Arm();
+  //mHand->~Hand();
 }
 
 // Servo Movements Arm ---------------------------------------------------- 
