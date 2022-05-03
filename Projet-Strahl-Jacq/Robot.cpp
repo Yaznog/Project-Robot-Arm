@@ -12,7 +12,7 @@ Robot::Robot() {
   // Create arm (pinBase, pinShoulder, pinElbow)
   mArm = new Arm(11, 10, 9);
   // Create hand (pinWrist_ver, pinWrist_rot, pinGripper)
-  //mHand  = new Hand(5, 6, 3);
+  mHand  = new Hand(5, 6, 3);
 }
 
 Robot::~Robot() {
@@ -21,7 +21,7 @@ Robot::~Robot() {
 #endif
 
   mArm->~Arm();
-  //mHand->~Hand();
+  mHand->~Hand();
 }
 
 // Robot init ---------------------------------------------------- 
@@ -73,6 +73,20 @@ void Robot::_softwarePWM(int high_time, int low_time) {
 }
 
 // Servo Movements Arm ---------------------------------------------------- 
+
+void Robot::MoveOneServoToAngleArm(uint8_t servoID, uint8_t angle) {
+#ifdef DEBUG
+  Serial.println("Robot::MoveOneServoToAngleArm");
+#endif
+  mArm->MoveOneServoToAngle(servoID, angle);
+}
+
+void Robot::MoveOneServoToAngleArm(uint8_t servoID, uint8_t angle, uint16_t timeDelay) {
+#ifdef DEBUG
+  Serial.println("Robot::MoveOneServoToAngleArm");
+#endif
+  mArm->MoveOneServoToAngle(servoID, angle, timeDelay);
+}
 
 void Robot::MoveWristToCoordinate(float x, float y, float z) {
 #ifdef DEBUG

@@ -16,6 +16,13 @@
 #define Y_TO_LOW -100
 #define Y_TO_HIGH 100
 
+#define BASE_ID 1
+#define SHOULDER_ID 2
+#define ELBOW_ID 3
+#define WRISTVER_ID 4
+#define WRISTROT_ID 5
+#define GRIPPER_ID 6
+
 struct Nunchuk{
   float x;
   float y;
@@ -38,11 +45,13 @@ void setup()
 
 void loop() 
 {
+  robot->MoveOneServoToAngleArm(BASE_ID, 90);
+  /*
   if(nunchuk_read())
   {
     GetNunchukData();
-  }
-  robot->MoveWristToCoordinate(nunchuk.x, nunchuk.y, 100.0);
+  }*/
+  //robot->MoveWristToCoordinate(nunchuk.x, nunchuk.y, 100.0);
   delay(100);
   //DoCircle(10, 10, 500, 10, 1);
   //DoCircle(10, 10, 10, 1);

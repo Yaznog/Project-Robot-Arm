@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "Arm.h"
-//#include "Hand.h"
+#include "Hand.h"
 
 // You should set begin(SOFT_START_DISABLED) if you are using the Arm Robot shield V1.6
 #define SOFT_START_DISABLED    -999
@@ -29,7 +29,9 @@ class Robot
     unsigned int RobotInit(int soft_start_level=SOFT_START_DEFAULT);
     void _softStart(int soft_start_level);
     void _softwarePWM(int high_time, int low_time);
-    
+
+    void MoveOneServoToAngleArm(uint8_t servoID, uint8_t angle);
+    void MoveOneServoToAngleArm(uint8_t servoID, uint8_t angle, uint16_t timeDelay);
     void MoveWristToCoordinate(float x, float y, float z);
     void MoveWristToCoordinate(float x, float y, float z, uint16_t timeDelay);
     void MoveWristToCoordinatePolar(float module, float argument, float z);
@@ -44,7 +46,7 @@ class Robot
   private:
 
     Arm *mArm;
-    //Hand *mHand;
+    Hand *mHand;
 };
 
 #endif

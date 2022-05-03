@@ -84,8 +84,8 @@ void Hand::MoveToTarget() {
   MoveServosToAngle((uint8_t) GetServoBaseAngle(), 
                     (uint8_t) GetServoShoulderAngle(), 
                     (uint8_t) GetServoAngle());
-}
-
+}*/
+/*
 void Hand::MoveToTarget(uint16_t timeDelay) {
 #ifdef DEBUG
   Serial.println("Hand::MoveToTargetTime");
@@ -95,32 +95,32 @@ void Hand::MoveToTarget(uint16_t timeDelay) {
                     (uint8_t) GetServoShoulderAngle(), 
                     (uint8_t) GetServoElbowAngle(), 
                     timeDelay);
-}
+}*/
 
-void Hand::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle) {
+void Hand::MoveServosToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8_t gripperAngle) {
 #ifdef DEBUG
   Serial.println("Hand::MoveServosToAngle");
 #endif
 
-  mWristVer->     angle = baseAngle;
-  mWristRot-> angle = shoulderAngle;
-  mGripper->    angle = elbowAngle;
+  mWristVer-> angle = wristVerAngle;
+  mWristRot-> angle = wristRotAngle;
+  mGripper->  angle = gripperAngle;
   
-  mWristVer->     servo->write(mWristVer->     angle);
-  mWristRot-> servo->write(mWristRot-> angle);
-  mGripper->    servo->write(mGripper->    angle);
+  mWristVer-> servo->write(mWristVer->  angle);
+  mWristRot-> servo->write(mWristRot->  angle);
+  mGripper->  servo->write(mGripper->   angle);
 
 #ifdef DEBUG
-  Serial.print("     ServosAngle : base = ");
-  Serial.print(mWristVer->    angle);
-  Serial.print(" shoulder = ");
-  Serial.print(mWristRot->angle);
-  Serial.print(" elbow = ");
+  Serial.print("     ServosAngle : wristVer = ");
+  Serial.print(mWristVer->  angle);
+  Serial.print(" wristRotlder = ");
+  Serial.print(mWristRot->  angle);
+  Serial.print(" gripper = ");
   Serial.println(mGripper-> angle);
 #endif
 }
 
-void Hand::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay) {
+void Hand::MoveServosToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8_t gripperAngle, uint16_t timeDelay) {
 #ifdef DEBUG
   Serial.println("Hand::MoveServosToAngleTime");
 #endif
@@ -134,75 +134,75 @@ void Hand::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t e
 #endif
 
 #ifdef DEBUG
-  Serial.print("     Angle : base = ");
-  Serial.print(baseAngle);
-  Serial.print(" shoulder = ");
-  Serial.print(shoulderAngle);
-  Serial.print(" elbow = ");
-  Serial.println(elbowAngle);
+  Serial.print("     Angle : wristVer = ");
+  Serial.print(wristVerAngle);
+  Serial.print(" wristRot = ");
+  Serial.print(wristRotAngle);
+  Serial.print(" gripper = ");
+  Serial.println(gripperAngle);
 #endif
 
 #ifdef DEBUG
-  Serial.print("     ServosAngle : base = ");
-  Serial.print(mWristVer->    angle);
-  Serial.print(" shoulder = ");
-  Serial.print(mWristRot->angle);
-  Serial.print(" elbow = ");
+  Serial.print("     ServosAngle : wristVer = ");
+  Serial.print(mWristVer->  angle);
+  Serial.print(" wristRot = ");
+  Serial.print(mWristRot->  angle);
+  Serial.print(" gripper = ");
   Serial.println(mGripper-> angle);
 #endif
 
-  mWristVer->     stepMoving = (baseAngle     - mWristVer->     angle) / stepNumber;
-  mWristRot-> stepMoving = (shoulderAngle - mWristRot-> angle) / stepNumber;
-  mGripper->    stepMoving = (elbowAngle    - mGripper->    angle) / stepNumber;
+  mWristVer-> stepMoving = (wristVerAngle - mWristVer-> angle) / stepNumber;
+  mWristRot-> stepMoving = (wristRotAngle - mWristRot-> angle) / stepNumber;
+  mGripper->  stepMoving = (gripperAngle  - mGripper->  angle) / stepNumber;
 
 #ifdef DEBUG
-    Serial.print("     StepMoving : base = ");
-    Serial.print(mWristVer->    stepMoving);
-    Serial.print(" shoulder = ");
-    Serial.print(mWristRot->stepMoving);
-    Serial.print(" elbow = ");
+    Serial.print("     StepMoving : wristVer = ");
+    Serial.print(mWristVer->  stepMoving);
+    Serial.print(" wristRot = ");
+    Serial.print(mWristRot->  stepMoving);
+    Serial.print(" gripper = ");
     Serial.println(mGripper-> stepMoving);
 #endif
   
   for(uint8_t i=1;i<stepNumber;i++)
   {
-    mWristVer->     angle += mWristVer->     stepMoving;
-    mWristRot-> angle += mWristRot-> stepMoving;
-    mGripper->    angle += mGripper->    stepMoving;
+    mWristVer-> angle += mWristVer->  stepMoving;
+    mWristRot-> angle += mWristRot->  stepMoving;
+    mGripper->  angle += mGripper->   stepMoving;
     
-    mWristVer->     servo->write(mWristVer->     angle);
-    mWristRot-> servo->write(mWristRot-> angle);
-    mGripper->    servo->write(mGripper->    angle);
+    mWristVer-> servo->write(mWristVer->  angle);
+    mWristRot-> servo->write(mWristRot->  angle);
+    mGripper->  servo->write(mGripper->   angle);
 
 #ifdef DEBUG
-    Serial.print("     ServosAngle : base = ");
-    Serial.print(mWristVer->angle);
-    Serial.print(" shoulder = ");
-    Serial.print(mWristRot->angle);
-    Serial.print(" elbow = ");
-    Serial.println(mGripper->angle);
+    Serial.print("     ServosAngle : wristVer = ");
+    Serial.print(mWristVer->  angle);
+    Serial.print(" wristRot = ");
+    Serial.print(mWristRot->  angle);
+    Serial.print(" gripper = ");
+    Serial.println(mGripper-> angle);
 #endif
 
     delay(stepDelay);
   }
 
-  mWristVer->     angle = baseAngle;
-  mWristRot-> angle = shoulderAngle;
-  mGripper->    angle = elbowAngle;
+  mWristVer-> angle = wristVerAngle;
+  mWristRot-> angle = wristRotAngle;
+  mGripper->  angle = gripperAngle;
   
-  mWristVer->     servo->write(mWristVer->     angle);
-  mWristRot-> servo->write(mWristRot-> angle);
-  mGripper->    servo->write(mGripper->    angle);
+  mWristVer-> servo->write(mWristVer->  angle);
+  mWristRot-> servo->write(mWristRot->  angle);
+  mGripper->  servo->write(mGripper->   angle);
 
 #ifdef DEBUG
-    Serial.print("     EndMovement : base = ");
-    Serial.print(mWristVer->angle);
-    Serial.print(" shoulder = ");
-    Serial.print(mWristRot->angle);
-    Serial.print(" elbow = ");
-    Serial.println(mGripper->angle);
+    Serial.print("     EndMovement : wristVer = ");
+    Serial.print(mWristVer->  angle);
+    Serial.print(" wristRot = ");
+    Serial.print(mWristRot->  angle);
+    Serial.print(" gripper = ");
+    Serial.println(mGripper-> angle);
 #endif
-}*/
+}
 
 // Coordinates ---------------------------------------------------
 /*

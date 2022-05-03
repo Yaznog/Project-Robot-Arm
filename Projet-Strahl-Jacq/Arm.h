@@ -8,16 +8,22 @@
 #define BASE_ANGLE_MAX 180
 #define BASE_ANGLE_MIN 0
 #define BASE_RANGE 100
+#define BASE_ID 1
     
 #define SHOULDER_ANGLE_INIT 90
 #define SHOULDER_ANGLE_MAX 180
 #define SHOULDER_ANGLE_MIN 0
 #define SHOULDER_RANGE 200
-    
+#define SHOULDER_ID 2    
+
 #define ELBOW_ANGLE_INIT 90
 #define ELBOW_ANGLE_MAX 180
 #define ELBOW_ANGLE_MIN 0
 #define ELBOW_RANGE 200
+#define ELBOW_ID 3
+
+#ifndef SERVOMOTOR
+#define SERVOMOTOR
 
 struct Servomotor{
   Servo *servo;
@@ -32,7 +38,10 @@ struct Servomotor{
   uint8_t range;
   int8_t pin = -1;
 };
+#endif
 
+#ifndef COORDINATE
+#define COORDINATE
 struct Coordinate{
   float x;
   float y;
@@ -40,6 +49,7 @@ struct Coordinate{
   float module;
   float argument;
 };
+#endif
 
 class Arm
 {
@@ -56,6 +66,8 @@ class Arm
     
     void MoveToTarget();
     void MoveToTarget(uint16_t timeDelay);
+    void MoveOneServoToAngle(uint8_t servoID, uint8_t angle);
+    void MoveOneServoToAngle(uint8_t servoID, uint8_t angle, uint16_t timeDelay);
     void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle);
     void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay); //timeDelay in millisecond
 

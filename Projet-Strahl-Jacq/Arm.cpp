@@ -97,6 +97,100 @@ void Arm::MoveToTarget(uint16_t timeDelay) {
                     timeDelay);
 }
 
+void Arm::MoveOneServoToAngle(uint8_t servoID, uint8_t angle) {
+#ifdef DEBUG
+  Serial.println("Arm::MoveOneServoToAngle");
+#endif 
+
+  if(servoID == BASE_ID) {
+    mBase->angle = angle;
+    mBase->servo->write(mBase->angle);
+#ifdef DEBUG
+    Serial.print("     ServosAngle : base = ");
+    Serial.print(mBase->angle);
+#endif
+  }
+  else if(servoID == SHOULDER_ID) {
+    mShoulder->angle = angle;
+    mShoulder->servo->write(mShoulder->angle);
+#ifdef DEBUG
+    Serial.print("     ServosAngle : shoulder = ");
+    Serial.print(mShoulder->angle);
+#endif
+  }
+  else if(servoID == ELBOW_ID) {
+    mElbow->angle = angle;
+    mElbow->servo->write(mElbow->angle);
+#ifdef DEBUG
+    Serial.print("     ServosAngle : elbox = ");
+    Serial.print(mElbow->angle);
+#endif
+  }
+}
+
+void Arm::MoveOneServoToAngle(uint8_t servoID, uint8_t angle, uint16_t timeDelay) {
+#ifdef DEBUG
+  Serial.println("Arm::MoveOneServoToAngle");
+#endif 
+
+  uint8_t stepNumber = 5;
+  uint16_t stepDelay = timeDelay/stepNumber;
+
+#ifdef DEBUG
+  Serial.print("     stepDelay = ");
+  Serial.println(stepDelay);
+#endif
+  
+  if(servoID == BASE_ID) {
+    mBase->stepMoving = (angle - mBase->angle) / stepNumber;
+    for(uint8_t i=1;i<stepNumber;i++)
+    {
+      mBase->angle += mBase->stepMoving;
+      mBase->servo->write(mBase->angle);
+      delay(stepDelay);
+    }
+    mBase->angle = angle;
+    mBase->servo->write(mBase->angle);
+    
+#ifdef DEBUG
+    Serial.print("     ServosAngle : base = ");
+    Serial.print(mBase->angle);
+#endif
+  }
+  else if(servoID == SHOULDER_ID) {
+    mShoulder->stepMoving = (angle - mShoulder-> angle) / stepNumber;
+    for(uint8_t i=1;i<stepNumber;i++)
+    {
+      mShoulder->angle += mShoulder->stepMoving;
+      mShoulder->servo->write(mShoulder->angle);
+      delay(stepDelay);
+    }
+    mShoulder->angle = angle;
+    mShoulder->servo->write(mShoulder->angle);
+    
+#ifdef DEBUG
+    Serial.print("     ServosAngle : shoulder = ");
+    Serial.print(mShoulder->angle);
+#endif
+  }
+  else if(servoID == ELBOW_ID) {
+    mElbow->stepMoving = (angle - mElbow->angle) / stepNumber;
+    for(uint8_t i=1;i<stepNumber;i++)
+    {
+      mElbow->angle += mElbow->stepMoving;
+      mElbow->servo->write(mElbow->angle);
+      delay(stepDelay);
+    }
+    mElbow->angle = angle;
+    mElbow->servo->write(mElbow->angle);
+    
+#ifdef DEBUG
+    Serial.print("     ServosAngle : elbow = ");
+    Serial.print(mElbow->angle);
+#endif
+  }  
+}
+
 void Arm::MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle) {
 #ifdef DEBUG
   Serial.println("Arm::MoveServosToAngle");
@@ -338,7 +432,7 @@ uint8_t Arm::GetBaseAngle() {
   Serial.println("Arm::GetBaseAngle");
 #endif
 
-  return mBase->servo->read();
+  return mBase->angle;
 }
 
 uint8_t Arm::GetShoulderAngle() {
@@ -346,7 +440,7 @@ uint8_t Arm::GetShoulderAngle() {
   Serial.println("Arm::GetShoulderAngle");
 #endif
 
-  return mShoulder->servo->read();
+  return mShoulder->angle;
 }
 
 uint8_t Arm::GetElbowAngle()  {
@@ -354,5 +448,5 @@ uint8_t Arm::GetElbowAngle()  {
   Serial.println("Arm::GetElbowAngle");
 #endif
 
-  return mElbow->servo->read();
+  return mElbow->angle;
 }

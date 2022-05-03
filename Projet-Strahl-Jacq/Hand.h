@@ -8,17 +8,22 @@
 #define WRISTVER_ANGLE_MAX 180
 #define WRISTVER_ANGLE_MIN 0
 #define WRISTVER_RANGE 100
+#define WRISTVER_ID 4
     
 #define WRISTROT_ANGLE_INIT 90
 #define WRISTROT_ANGLE_MAX 180
 #define WRISTROT_ANGLE_MIN 0
 #define WRISTROT_RANGE 200
+#define WRISTROT_ID 5
     
 #define GRIPPER_ANGLE_INIT 90
 #define GRIPPER_ANGLE_MAX 180
 #define GRIPPER_ANGLE_MIN 0
 #define GRIPPER_RANGE 200
+#define GRIPPER_ID 6
 
+#ifndef SERVOMOTOR
+#define SERVOMOTOR
 struct Servomotor{
   Servo *servo;
   uint8_t angle;
@@ -32,6 +37,7 @@ struct Servomotor{
   uint8_t range;
   int8_t pin = -1;
 };
+#endif
 
 class Hand
 {
@@ -48,8 +54,8 @@ class Hand
     
     //void MoveToTarget();
     //void MoveToTarget(uint16_t timeDelay);
-    //void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle);
-    //void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay); //timeDelay in millisecond
+    void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle);
+    void MoveServosToAngle(uint8_t baseAngle, uint8_t shoulderAngle, uint8_t elbowAngle, uint16_t timeDelay); //timeDelay in millisecond
 
     //void SetCoordinateTarget(float x, float y, float z);
     //void SetCoordinatePolarTarget(float module, float argument, float z);
