@@ -4,14 +4,10 @@
 
 //#define DEBUG
 
-Hand::Hand(int8_t pinWristVer, int8_t pinWristRot, int8_t pinGripper) {
+Hand::Hand() {
 #ifdef DEBUG
   Serial.println("New Hand");
 #endif
-
-  mWristVer-> pin = pinWristVer;
-  mWristRot-> pin = pinWristRot;
-  mGripper->  pin = pinGripper;
 
   HandInit();
 }
@@ -29,6 +25,7 @@ void Hand::HandInit() {
   Serial.println("Hand::HandInit Start");
 #endif
 
+  SetPinServo();
   AttachServos();
   InitPositionServos();
   SetRangeServos();
@@ -43,9 +40,9 @@ void Hand::AttachServos() {
   Serial.println("Hand::AttachServos");
 #endif
 
-  mWristVer-> servo->attach(mWristVer-> pin);
-  mWristRot-> servo->attach(mWristRot-> pin);
-  mGripper->  servo->attach(mGripper->  pin);
+  mServoWristVer.attach(mWristVer.pin);
+  mServoWristRot.attach(mWristRot.pin);
+  mServoGripper. attach(mGripper. pin);
 }
 
 void Hand::InitPositionServos() {
@@ -53,7 +50,22 @@ void Hand::InitPositionServos() {
   Serial.println("Hand::InitPositionServos");
 #endif
 
-  //MoveServosToAngle(WRISTVER_ANGLE_INIT, WRISTROT_ANGLE_INIT, GRIPPER_ANGLE_INIT);
+  mWristVer.angle = WRISTVER_ANGLE_INIT;
+  mWristRot.angle = WRISTROT_ANGLE_INIT;
+  mGripper.angle = GRIPPER_ANGLE_INIT;
+
+  mServoWristVer.write(mWristVer.angle);
+  mServoWristRot.write(mWristRot.angle);
+  mServoGripper.write (mGripper. angle);
+}
+
+void Hand::SetPinServo() {
+#ifdef DEBUG
+  Serial.println("Hand::SetPinServo");
+#endif
+  mWristVer.pin = WRISTVER_PIN;
+  mWristRot.pin = WRISTROT_PIN;
+  mGripper.pin = GRIPPER_PIN;
 }
 
 void Hand::SetRangeServos() {
@@ -61,9 +73,9 @@ void Hand::SetRangeServos() {
   Serial.println("Hand::SetRangeServo");
 #endif
 
-  mWristVer-> range = WRISTVER_RANGE;
-  mWristRot-> range = WRISTROT_RANGE;
-  mGripper->  range = GRIPPER_RANGE;
+  mWristVer. range = WRISTVER_RANGE;
+  mWristRot. range = WRISTROT_RANGE;
+  mGripper.  range = GRIPPER_RANGE;
 }
 
 void Hand::CalibrateServos() {
@@ -102,24 +114,24 @@ void Hand::MoveServosToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8
   Serial.println("Hand::MoveServosToAngle");
 #endif
 
-  mWristVer-> angle = wristVerAngle;
-  mWristRot-> angle = wristRotAngle;
-  mGripper->  angle = gripperAngle;
+  mWristVer.angle = wristVerAngle;
+  mWristRot.angle = wristRotAngle;
+  mGripper. angle = gripperAngle;
   
-  mWristVer-> servo->write(mWristVer->  angle);
-  mWristRot-> servo->write(mWristRot->  angle);
-  mGripper->  servo->write(mGripper->   angle);
+  mServoWristVer.write(mWristVer.angle);
+  mServoWristRot.write(mWristRot.angle);
+  mServoGripper. write(mGripper. angle);
 
 #ifdef DEBUG
   Serial.print("     ServosAngle : wristVer = ");
-  Serial.print(mWristVer->  angle);
+  Serial.print(mWristVer.angle);
   Serial.print(" wristRotlder = ");
-  Serial.print(mWristRot->  angle);
+  Serial.print(mWristRot.angle);
   Serial.print(" gripper = ");
-  Serial.println(mGripper-> angle);
+  Serial.println(mGripper.angle);
 #endif
 }
-
+/*
 void Hand::MoveServosToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8_t gripperAngle, uint16_t timeDelay) {
 #ifdef DEBUG
   Serial.println("Hand::MoveServosToAngleTime");
@@ -196,13 +208,13 @@ void Hand::MoveServosToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8
 
 #ifdef DEBUG
     Serial.print("     EndMovement : wristVer = ");
-    Serial.print(mWristVer->  angle);
+    Serial.print(mWristVer.  angle);
     Serial.print(" wristRot = ");
-    Serial.print(mWristRot->  angle);
+    Serial.print(mWristRot.  angle);
     Serial.print(" gripper = ");
-    Serial.println(mGripper-> angle);
+    Serial.println(mGripper. angle);
 #endif
-}
+}*/
 
 // Coordinates ---------------------------------------------------
 /*
@@ -324,13 +336,6 @@ float Hand::MaxAngle(float angle) {
   return angle;
 }
 
-float Hand::RadToDegree(float angle) {
-#ifdef DEBUG
-  Serial.println("Hand::RadToDegree");
-#endif
-  return (180.0/PI)*angle;
-}
-
 // Getter ----------------------------------------------------
 
 uint8_t Hand::GetWristVerAngle() {
@@ -338,7 +343,7 @@ uint8_t Hand::GetWristVerAngle() {
   Serial.println("Hand::GetWristVerAngle");
 #endif
 
-  return mWristVer->angle;
+  return mWristVer.angle;
 }
 
 uint8_t Hand::GetWristRotAngle() {
@@ -346,7 +351,7 @@ uint8_t Hand::GetWristRotAngle() {
   Serial.println("Hand::GetWristRotAngle");
 #endif
 
-  return mWristRot->angle;
+  return mWristRot.angle;
 }
 
 uint8_t Hand::GetGripperAngle()  {
@@ -354,5 +359,5 @@ uint8_t Hand::GetGripperAngle()  {
   Serial.println("Hand::GetGripperAngle");
 #endif
 
-  return mGripper->angle;
+  return mGripper.angle;
 }

@@ -8,11 +8,6 @@ Robot::Robot() {
 #endif
 
   RobotInit();
-
-  // Create arm (pinBase, pinShoulder, pinElbow)
-  mArm = new Arm(11, 10, 9);
-  // Create hand (pinWrist_ver, pinWrist_rot, pinGripper)
-  mHand  = new Hand(5, 6, 3);
 }
 
 Robot::~Robot() {
@@ -26,50 +21,19 @@ Robot::~Robot() {
 
 // Robot init ---------------------------------------------------- 
 
-unsigned int Robot::RobotInit(int soft_start_level) {
+void Robot::RobotInit() {
 #ifdef DEBUG
   Serial.println("Robot::RobotInit Start");
 #endif
 
-  //Calling Braccio.begin(SOFT_START_DISABLED) the Softstart is disabled and you can use the pin 12
-  if(soft_start_level!=SOFT_START_DISABLED){
-    pinMode(SOFT_START_CONTROL_PIN,OUTPUT);
-    digitalWrite(SOFT_START_CONTROL_PIN,LOW);
-  }
-
-  if(soft_start_level!=SOFT_START_DISABLED)
-        _softStart(soft_start_level);
-        
+  // Create arm (pinBase, pinShoulder, pinElbow)
+  mArm = new Arm();
+  // Create hand (pinWrist_ver, pinWrist_rot, pinGripper)
+  mHand  = new Hand();
+  
 #ifdef DEBUG
   Serial.println("Arm::RobotInit End");
 #endif
-  return 1;
-}
-
-void Robot::_softStart(int soft_start_level) {
-#ifdef DEBUG
-  Serial.println("Arm::_softStart");
-#endif
-
-  long int tmp=millis();
-  while(millis()-tmp < LOW_LIMIT_TIMEOUT)
-    _softwarePWM(80+soft_start_level, 450 - soft_start_level);   //the sum should be 530usec  
-
-  while(millis()-tmp < HIGH_LIMIT_TIMEOUT)
-    _softwarePWM(75 + soft_start_level, 430 - soft_start_level); //the sum should be 505usec
-
-  digitalWrite(SOFT_START_CONTROL_PIN,HIGH);
-}
-
-void Robot::_softwarePWM(int high_time, int low_time) {
-#ifdef DEBUG
-  //Serial.println("Arm::_softwarePWM");
-#endif
-
-  digitalWrite(SOFT_START_CONTROL_PIN,HIGH);
-  delayMicroseconds(high_time);
-  digitalWrite(SOFT_START_CONTROL_PIN,LOW);
-  delayMicroseconds(low_time); 
 }
 
 // Servo Movements Arm ---------------------------------------------------- 
@@ -120,6 +84,14 @@ void Robot::MoveWristToCoordinatePolar(float module, float argument, float z, ui
   mArm->MoveToTarget(timeDelay);
 }
 
+void Robot::MoveHandToAngle(uint8_t wristVerAngle, uint8_t wristRotAngle, uint8_t gripperAngle) {
+#ifdef DEBUG
+  Serial.println("Robot::MoveHandToAngle");
+#endif
+
+  mHand->MoveServosToAngle(wristVerAngle, wristRotAngle, gripperAngle);
+}
+
 // InitPosition ---------------------------------------------------- 
 
 void Robot::InitPositionArm() {
@@ -133,7 +105,7 @@ void Robot::InitPositionHand() {
 #ifdef DEBUG
   Serial.println("Robot::InitPositionHand");
 #endif 
-  //mHand->InitPositionServos();
+  mHand->InitPositionServos();
 }
 
 // Calibrate ---------------------------------------------------- 
@@ -149,5 +121,5 @@ void Robot::CalibrateHand() {
 #ifdef DEBUG
   Serial.println("Robot::CalibrateArm");
 #endif 
-  //mHand->CalibrateServos();
+  mHand->CalibrateServos();
 }
